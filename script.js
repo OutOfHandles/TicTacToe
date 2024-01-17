@@ -242,7 +242,7 @@ buttons.forEach(function(button){
                     move++;
                     win();
                     if(move < 9){
-                        time = Math.random()*1500; //very smart bot
+                        time = Math.random()*1500;
                         thinking = true;
                         console.log(time);
                         setTimeout(function(){
