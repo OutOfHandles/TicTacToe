@@ -37,16 +37,14 @@ let board = [
 function block(){
     row = parseInt(row);
     column = parseInt(column);
-    if(row-1 >= 0){
-        if(column-1 >= 0 && board[row-1][column-1] == ' '){
-            return [row-1, column-1];
-        }
-        if(board[row-1][column] == ' '){
-            return [row-1, column];
-        }
-        if(column+1 <= 2 && board[row-1][column+1] == ' '){
-            return [row-1, column+1];
-        }
+    if(column-1 >= 0 && row-1 >= 0 && board[row-1][column-1] == ' '){
+        return [row-1, column-1];
+    }
+    if(row-1 >= 0 && board[row-1][column] == ' '){
+        return [row-1, column];
+    }
+    if(row-1 >= 0 && column+1 <= 2 && board[row-1][column+1] == ' '){
+        return [row-1, column+1];
     }
     if(column+1 <= 2 && board[row][column+1] == ' '){
         return [row, column+1];
@@ -56,16 +54,14 @@ function block(){
         return [row, column-1];
     }
 
-    if(row+1 <= 2){
-        if(column-1 >= 0 && board[row+1][column-1] == ' '){
-            return [row+1, column-1];
-        }
-        if(board[row+1][column] == ' '){
-            return [row+1, column];
-        }
-        if(column+1 <= 2 && board[row+1][column+1] == ' '){
-            return [row+1, column+1];
-        }
+    if(column-1 >= 0 && row+1 <= 2  && board[row+1][column-1] == ' '){
+        return [row+1, column-1];
+    }
+    if(row+1 <= 2 && board[row+1][column] == ' '){
+        return [row+1, column];
+    }
+    if(column+1 <= 2 && row+1 <= 2 && board[row+1][column+1] == ' '){
+        return [row+1, column+1];
     }
 
     return null;
@@ -266,23 +262,21 @@ buttons.forEach(function(button){
                                     botButton.textContent = 'O';
                                 }
                                 else{
-                                    console.log(block());
-                                    if(block() != null){
-                                        console.log("Blocking...");
-                                        moveBOT = block();
-                                        board[moveBOT[0]][moveBOT[1]] = 'O';
-                                        botButton = document.getElementById(moveBOT[0] + ' ' + moveBOT[1]);
-                                        botButton.textContent = 'O';
-                                    }
-                                    else{
-                                        do{
-                                            botRow = Math.floor(Math.random()*3);
-                                            botColumn = Math.floor(Math.random()*3);
-                                        }while(board[botRow][botColumn] != ' ');
-                                        botButton = document.getElementById(botRow + ' ' + botColumn);
-                                        botButton.textContent = 'O'
-                                        board[botRow][botColumn] = 'O'
-                                    }
+                                    // console.log(block());
+                                    // if(block() != null){
+                                    //     console.log("Blocking...");
+                                    //     moveBOT = block();
+                                    //     board[moveBOT[0]][moveBOT[1]] = 'O';
+                                    //     botButton = document.getElementById(moveBOT[0] + ' ' + moveBOT[1]);
+                                    //     botButton.textContent = 'O';
+                                    // }
+                                    do{
+                                        botRow = Math.floor(Math.random()*3);
+                                        botColumn = Math.floor(Math.random()*3);
+                                    }while(board[botRow][botColumn] != ' ');
+                                    botButton = document.getElementById(botRow + ' ' + botColumn);
+                                    botButton.textContent = 'O'
+                                    board[botRow][botColumn] = 'O'
                                 }
                             }
                             botButton.classList.add('selected');
