@@ -1,0 +1,101 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: verdana, serif;
+  margin: 0;
+  padding: 0;
+  color: white;
+  background-color: #1a181a;
+}
+
+.loser {
+  color: red;
+}
+
+.winner {
+  color: #3E9130;
+}
+
+main {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+main .win {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  height: 50px;
+}
+main .win #winTxt {
+  color: #3E9130;
+  font-size: 2em;
+}
+main .win #invalid {
+  visibility: hidden;
+  color: red;
+  font-size: 2em;
+}
+main .board {
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  grid-template-columns: repeat(3, 1fr);
+}
+main .board button {
+  font-size: 3em;
+  font-weight: bolder;
+  width: 100px;
+  height: 100px;
+  border: 1px solid #1a181a;
+  padding: 0;
+  outline: none;
+  color: #a19f9f;
+}
+main .board .selected {
+  color: #000000;
+  transition: ease-out 0.3s;
+}
+main .board .winner {
+  color: #3E9130;
+}
+main .board .loser {
+  color: red;
+}
+main .score-container {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+main .score-container .score {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+main .score-container .score span:nth-child(2) {
+  margin-top: 10px;
+}
+main .load {
+  visibility: hidden;
+}
+main .load .loading-label {
+  margin-top: 10px;
+  width: 100%;
+  text-align: center;
+}
+main .load .loading-container {
+  margin-top: 10px;
+  width: 100%;
+  border: 1px solid #ffffff;
+  border-radius: 20px;
+}
+main .load .loading-container .loading {
+  width: 0%;
+  border-radius: 20px;
+  background-color: #ffffff;
+  height: 25px;
+  transition: width 3.05s;
+}/*# sourceMappingURL=styles.css.map */
