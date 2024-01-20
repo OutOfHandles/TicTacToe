@@ -53,7 +53,7 @@ function boardSpace(){
 function tryCatch(move1, move2){
     do{
         try{
-            console.log("Blocking... " + block(move1, move2));
+            console.log("Playing... " + block(move1, move2));
             moveBOT = block(move1, move2);
             for(let i = 0; i<2; i++){
                 moveBOT[i] = parseInt(moveBOT[i]);
