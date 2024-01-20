@@ -1,5 +1,4 @@
 let buttons = document.querySelectorAll('.board button');
-let move = 0;
 let botRow;
 let botColumn;
 let winDiv = document.querySelector('.win');
@@ -20,7 +19,9 @@ let botButton;
 let time;
 let thinking = false;
 let resetting = false;
-let Won;
+let firstMove = true;
+
+let moveBOT;
 
 let winLoss;
 
@@ -37,61 +38,100 @@ let board = [
     [' ', ' ', ' ']
 ];
 
-function block(){
-    row = parseInt(row);
-    column = parseInt(column);
+function boardSpace(){
+    for(let i = 0; i<board.length; i++){
+        for(let j = 0; j < board[i].length; j++){
+            if(board[i][j] == ' '){
+                return 1;
+            }
+        }
+    }
+    console.log("Board full");
+    return 0;
+}
+
+function tryCatch(move1, move2){
+    do{
+        try{
+            console.log("Blocking... " + block(move1, move2));
+            moveBOT = block(move1, move2);
+            for(let i = 0; i<2; i++){
+                moveBOT[i] = parseInt(moveBOT[i]);
+            }
+            board[moveBOT[0]][moveBOT[1]] = 'O';
+            botButton = document.getElementById(moveBOT[0] + ' ' + moveBOT[1]);
+            botButton.textContent = 'O';
+            break;
+        }
+        catch(err){
+            console.log(err + "\nRetrying...")
+        }
+    }while(true);
+}
+
+function block(recRow, recCol){
+    recRow = parseInt(recRow);
+    recCol = parseInt(recCol);
     counter = 0;
     do{
-        randNum = Math.floor(Math.random() * 8) + 1;
-        switch(randNum){
-            case 1:
-                if(column-1 >= 0 && row-1 >= 0 && board[row-1][column-1] == ' '){
-                    return [row-1, column-1];
+        do{
+            try{
+                randNum = Math.floor(Math.random() * 8) + 1;
+                switch(randNum){
+                    case 1:
+                        if(recCol-1 >= 0 && recRow-1 >= 0 && board[recRow-1][recCol-1] == ' '){
+                            return [recRow-1, recCol-1];
+                        }
+                        counter++;
+                        break;
+                    case 2:
+                        if(recRow-1 >= 0 && board[recRow-1][recCol] == ' '){
+                            return [recRow-1, recCol];
+                        }
+                        counter++;
+                        break;
+                    case 3:
+                        if(recRow-1 >= 0 && recCol+1 <= 2 && board[recRow-1][recCol+1] == ' '){
+                            return [recRow-1, recCol+1];
+                        }
+                        counter++;
+                        break;
+                    case 4:
+                        if(recCol+1 <= 2 && board[recRow][recCol+1] == ' '){
+                            return [recRow, recCol+1];
+                        }
+                        counter++;
+                        break;
+                    case 5:
+                        if(recCol-1 >= 0 && board[recRow][recCol-1] == ' '){
+                            return [recRow, recCol-1];
+                        }
+                        break;
+                    case 6:
+                        if(recCol-1 >= 0 && row+1 <= 2  && board[recRow+1][recCol-1] == ' '){
+                            return [recRow+1, recCol-1];
+                        }
+                        counter++;
+                        break;
+                    case 7:
+                        if(recRow+1 <= 2 && board[recRow+1][recCol] == ' '){
+                            return [recRow+1, recCol];
+                        }
+                        counter++;
+                        break;
+                    case 8:
+                        if(recCol+1 <= 2 && recRow+1 <= 2 && board[recRow+1][recCol+1] == ' '){
+                            return [recRow+1, recCol+1];
+                        }
+                        counter++;
+                        break;
                 }
-                counter++;
                 break;
-            case 2:
-                if(row-1 >= 0 && board[row-1][column] == ' '){
-                    return [row-1, column];
-                }
-                counter++;
-                break;
-            case 3:
-                if(row-1 >= 0 && column+1 <= 2 && board[row-1][column+1] == ' '){
-                    return [row-1, column+1];
-                }
-                counter++;
-                break;
-            case 4:
-                if(column+1 <= 2 && board[row][column+1] == ' '){
-                    return [row, column+1];
-                }
-                counter++;
-                break;
-            case 5:
-                if(column-1 >= 0 && board[row][column-1] == ' '){
-                    return [row, column-1];
-                }
-                break;
-            case 6:
-                if(column-1 >= 0 && row+1 <= 2  && board[row+1][column-1] == ' '){
-                    return [row+1, column-1];
-                }
-                counter++;
-                break;
-            case 7:
-                if(row+1 <= 2 && board[row+1][column] == ' '){
-                    return [row+1, column];
-                }
-                counter++;
-                break;
-            case 8:
-                if(column+1 <= 2 && row+1 <= 2 && board[row+1][column+1] == ' '){
-                    return [row+1, column+1];
-                }
-                counter++;
-                break;
-        }
+            }
+            catch(err){
+                console.log(err + " Broke!");
+            }
+        }while(true);
     }while(counter < 8);
 
     return null;
@@ -99,42 +139,42 @@ function block(){
 
 function possibleWin(symbolCheck) {
     for(let i = 0; i < 3; i++){
-        if(board[i][0] === board[i][1] && board[i][1] === symbolCheck && board[i][2] === ' '){
+        if(board[i][0] == board[i][1] && board[i][1] == symbolCheck && board[i][2] == ' '){
             return [i, 2];
         }
-        if(board[i][1] === board[i][2] && board[i][2] === symbolCheck && board[i][0] === ' '){
+        if(board[i][1] == board[i][2] && board[i][2] == symbolCheck && board[i][0] == ' '){
             return [i, 0];
         }
-        if(board[i][0] === board[i][2] && board[i][2] === symbolCheck && board[i][1] === ' '){
+        if(board[i][0] == board[i][2] && board[i][2] == symbolCheck && board[i][1] == ' '){
             return [i, 1];
         }
-        if(board[0][i] === board[1][i] && board[1][i] === symbolCheck && board[2][i] === ' '){
+        if(board[0][i] == board[1][i] && board[1][i] == symbolCheck && board[2][i] == ' '){
             return [2, i];
         }
-        if(board[1][i] === board[2][i] && board[2][i] === symbolCheck && board[0][i] === ' '){
+        if(board[1][i] == board[2][i] && board[2][i] == symbolCheck && board[0][i] == ' '){
             return [0, i];
         }
-        if(board[0][i] === board[2][i] && board[2][i] === symbolCheck && board[1][i] === ' '){
+        if(board[0][i] == board[2][i] && board[2][i] == symbolCheck && board[1][i] == ' '){
             return [1, i];
         }
     }
 
-    if(board[0][0] === board[1][1] && board[1][1] === symbolCheck && board[2][2] === ' '){
+    if(board[0][0] == board[1][1] && board[1][1] == symbolCheck && board[2][2] == ' '){
         return [2, 2];
     }
-    if(board[1][1] === board[2][2] && board[2][2] === symbolCheck && board[0][0] === ' '){
+    if(board[1][1] == board[2][2] && board[2][2] == symbolCheck && board[0][0] == ' '){
         return [0, 0];
     }
-    if(board[0][0] === board[2][2] && board[2][2] === symbolCheck && board[1][1] === ' '){
+    if(board[0][0] == board[2][2] && board[2][2] == symbolCheck && board[1][1] == ' '){
         return [1, 1];
     }
-    if(board[0][2] === board[1][1] && board[1][1] === symbolCheck && board[2][0] === ' '){
+    if(board[0][2] == board[1][1] && board[1][1] == symbolCheck && board[2][0] == ' '){
         return [2, 0];
     }
-    if(board[1][1] === board[2][0] && board[2][0] === symbolCheck && board[0][2] === ' '){
+    if(board[1][1] == board[2][0] && board[2][0] == symbolCheck && board[0][2] == ' '){
         return [0, 2];
     }
-    if(board[0][2] === board[2][0] && board[2][0] === symbolCheck && board[1][1] === ' '){
+    if(board[0][2] == board[2][0] && board[2][0] == symbolCheck && board[1][1] == ' '){
         return [1, 1];
     }
     return null;
@@ -154,7 +194,7 @@ function reset(){
         button.classList.remove('loser');
         button.classList.remove('selected');
     });
-    resetting = false;
+    firstMove = true;
 }
 
 function highlight(row1, col1, row2, col2, row3, col3, symbol){
@@ -171,21 +211,21 @@ function highlight(row1, col1, row2, col2, row3, col3, symbol){
 
 function checkWin(){
     for (let i = 0; i < 3; i++){
-        if(board[i][0] === board[i][1] && board[i][1] === board[i][2] && board[i][2] !== ' '){
+        if(board[i][0] == board[i][1] && board[i][1] == board[i][2] && board[i][2] !== ' '){
             highlight(i, 0, i, 1, i, 2, board[i][0]);
             return [1, board[i][0]];
         }
-        if(board[0][i] === board[1][i] && board[1][i] === board[2][i] && board[2][i] !== ' '){
+        if(board[0][i] == board[1][i] && board[1][i] == board[2][i] && board[2][i] !== ' '){
             highlight(0, i, 1, i, 2, i, board[0][i]);
             return [1, board[0][i]];
         }
     }
 
-    if(board[0][0] === board[1][1] && board[1][1] === board[2][2] && board[2][2] !== ' '){
+    if(board[0][0] == board[1][1] && board[1][1] == board[2][2] && board[2][2] != ' '){
         highlight(0, 0, 1, 1, 2, 2, board[0][0]);
         return [1, board[0][0]];
     }
-    if(board[0][2] === board[1][1] && board[1][1] === board[2][0] && board[2][0] !== ' '){
+    if(board[0][2] == board[1][1] && board[1][1] == board[2][0] && board[2][0] != ' '){
         highlight(0, 2, 1, 1, 2, 0, board[0][2]);
         return [1, board[0][2]];
     }
@@ -203,15 +243,16 @@ function win(){
             plrWins += 1;
             winTxt.style.color = '#3E9130';
             winTxt.textContent = 'PLAYER (X) WINS';
-            Won = 1;
+            return 1;
         }
         else{
             botWins += 1;
             winTxt.style.color = 'red';
             winTxt.textContent = 'BOT (O) WINS';
+            return 1;
         }
-        move = 10;
     }
+    return 0;
 }
 
 function winsTxt(){
@@ -224,31 +265,28 @@ function afterMatch(){
     if(resetting){
         return;
     }
-    if(move === 9){
-        winTxt.textContent = 'TIE';
-        ties += 1;
-        winTxt.style.color = '#ffffff';
-    }
-
-    if(move === 9 || move === 10){
+    if(!boardSpace() || win()){
+        if(!boardSpace() && !win()){
+            winTxt.textContent = 'TIE';
+            ties += 1;
+            winTxt.style.color = '#ffffff';
+        }
         resetting = true;
         winsTxt();
         loadCont.style.visibility = 'visible';
         loadingBar.style.width = '100%';
-
+    
         setTimeout(function(){
             loadCont.style.visibility = 'hidden';
             loadingBar.style.width = '0%';
             winTxt.style.color = '#ffffff';
             
             reset();
-            Won = 0;
             setTimeout(function(){
                 winTxt.textContent = 'New Round';
             }, 0);
             setTimeout(function(){
                 resetting = false;
-                move = 0;
             }, 500);
 
             setTimeout(function(){
@@ -256,66 +294,67 @@ function afterMatch(){
             }, 4000);
         }, 3000);
     }
-    console.log(move);
 }
 
 buttons.forEach(function(button){
     button.addEventListener('click', function(){
-        if(!thinking){
+        if(!thinking && !resetting){
             [row, column] = button.id.split(' ');
-            if(move < 9){
+            if(boardSpace()){
                 if(board[row][column] == ' '){
                     invalidMove.style.visibility = 'hidden';
                     button.textContent = 'X'
                     board[row][column] = 'X'
                     button.classList.add('selected');
-                    move++;
                     win();
-                    if(move < 9){
-                        time = Math.random()*1500;
-                        thinking = true;
-                        console.log(time);
-                        setTimeout(function(){
-                            if(possibleWin('O') != null){
-                                console.log("O HAS WIN ON: " + possibleWin('O'));
-                                moveBOT = possibleWin('O');
-                                board[moveBOT[0]][moveBOT[1]] = 'O';
-                                botButton = document.getElementById(moveBOT[0] + ' ' + moveBOT[1]);
-                                botButton.textContent = 'O';
-                            }
-                            else{
-                                if(possibleWin('X') != null){
-                                    console.log("X HAS WIN ON: " + possibleWin('X'));
-                                    moveBOT = possibleWin('X');
+                    if(!win()){
+                        if(boardSpace()){
+                            time = Math.random()*1500;
+                            thinking = true;
+                            console.log(time);
+                            setTimeout(function(){
+                                if(possibleWin('O') != null){
+                                    console.log("O HAS WIN ON: " + possibleWin('O'));
+                                    moveBOT = possibleWin('O');
                                     board[moveBOT[0]][moveBOT[1]] = 'O';
                                     botButton = document.getElementById(moveBOT[0] + ' ' + moveBOT[1]);
                                     botButton.textContent = 'O';
                                 }
                                 else{
-                                    console.log(block());
-                                    if(block() != null){
-                                        console.log("Blocking...");
-                                        moveBOT = block();
+                                    if(possibleWin('X') != null){
+                                        console.log("X HAS WIN ON: " + possibleWin('X'));
+                                        moveBOT = possibleWin('X');
+                                        row = parseInt(row);
                                         board[moveBOT[0]][moveBOT[1]] = 'O';
                                         botButton = document.getElementById(moveBOT[0] + ' ' + moveBOT[1]);
                                         botButton.textContent = 'O';
                                     }
                                     else{
-                                        do{
-                                            botRow = Math.floor(Math.random()*3);
-                                            botColumn = Math.floor(Math.random()*3);
-                                        }while(board[botRow][botColumn] != ' ');
-                                        botButton = document.getElementById(botRow + ' ' + botColumn);
-                                        botButton.textContent = 'O'
-                                        board[botRow][botColumn] = 'O'
+                                        if(firstMove && block(row, column) != null){
+                                            tryCatch(row, column);
+                                            firstMove = false;
+                                        }
+                                        else{
+                                            if(block(moveBOT[0], moveBOT[0]) != null){
+                                                tryCatch(moveBOT[0], moveBOT[0]);
+                                            }
+                                            else{
+                                                do{
+                                                    botRow = Math.floor(Math.random()*3);
+                                                    botColumn = Math.floor(Math.random()*3);
+                                                }while(board[botRow][botColumn] != ' ');
+                                                botButton = document.getElementById(botRow + ' ' + botColumn);
+                                                botButton.textContent = 'O'
+                                                board[botRow][botColumn] = 'O'
+                                            }
+                                        }
                                     }
                                 }
-                            }
-                            botButton.classList.add('selected');
-                            move++;
-                            thinking = false;
-                            win();
-                        },time);
+                                botButton.classList.add('selected');
+                                thinking = false;
+                                win();
+                            },time);
+                        }
                     }
                 }
                 else{
@@ -326,8 +365,8 @@ buttons.forEach(function(button){
                     }, 500);
                 }
             }
-            if(Won || move == 9){
-                afterMatch()
+            if(win() || !boardSpace()){
+                afterMatch();
             }
             else{
                 setTimeout(function(){
